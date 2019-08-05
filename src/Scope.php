@@ -13,6 +13,7 @@ namespace League\Fractal;
 
 use InvalidArgumentException;
 use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\EmptyObjectResource;
 use League\Fractal\Resource\Item;
 use League\Fractal\Resource\Primitive;
 use League\Fractal\Resource\NullResource;
@@ -227,8 +228,6 @@ class Scope implements \JsonSerializable
 
     /**
      * Convert the current data for this scope to an array.
-     *
-     * @return array
      */
     public function toArray()
     {
@@ -280,6 +279,10 @@ class Scope implements \JsonSerializable
 
         // Pull out all of OUR metadata and any custom meta data to merge with the main level data
         $meta = $serializer->meta($this->resource->getMeta());
+
+        if ($this->resource instanceof EmptyObjectResource) {
+            return (object) array_merge($data, $meta);
+        }
 
         // in case of returning NullResource we should return null and not to go with array_merge
         if (is_null($data)) {
@@ -361,6 +364,9 @@ class Scope implements \JsonSerializable
                 list($transformedData[], $includedData[]) = $this->fireTransformer($transformer, $value);
             }
         } elseif ($this->resource instanceof NullResource) {
+            $transformedData = null;
+            $includedData = [];
+        } elseif ($this->resource instanceof EmptyObjectResource) {
             $transformedData = null;
             $includedData = [];
         } else {

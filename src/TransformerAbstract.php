@@ -12,6 +12,7 @@
 namespace League\Fractal;
 
 use League\Fractal\Resource\Collection;
+use League\Fractal\Resource\EmptyObjectResource;
 use League\Fractal\Resource\Item;
 use League\Fractal\Resource\NullResource;
 use League\Fractal\Resource\Primitive;
@@ -298,5 +299,10 @@ abstract class TransformerAbstract
     protected function null()
     {
         return new NullResource();
+    }
+
+    protected function emptyObject()
+    {
+        return new EmptyObjectResource();
     }
 }
